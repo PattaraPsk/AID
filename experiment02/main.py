@@ -17,7 +17,7 @@ look_back = 50
 
 response = requests.get('https://ocw.mit.edu/ans7870/6/6.006/s08/lecturenotes/files/t8.shakespeare.txt') 
 raw_text = response.text.split('\n\n\n\n')
-raw_text = raw_text[1:]
+raw_text = raw_text[1]
 raw_text = " ".join(raw_text)
 raw_text = raw_text.replace('\n',' ')
 raw_text = raw_text.replace('  ',' ')

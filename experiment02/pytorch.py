@@ -3,14 +3,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
-import torchtext
-from torchtext.data import get_tokenizer
 import requests
-import string
-import torchdata.datapipes as dp
-import torchtext.transforms as T
-import spacy
-from torchtext.vocab import build_vocab_from_iterator
 from keras.preprocessing.text import Tokenizer
 from keras.utils import to_categorical
 look_back = 50
@@ -87,13 +80,15 @@ class CharModel(nn.Module):
 
 n_epochs = 100
 batch_size = 256
+learning_rate = 20
 model = CharModel()
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
-optimizer = optim.Adam(model.parameters())
+optimizer = optim.Adam(model.parameters(),lr=learning_rate)
 loss_fn = nn.CrossEntropyLoss(reduction="sum")
 loader = DataLoader(TensorDataset(X, y), shuffle=True, batch_size=batch_size)
+
 # Split train test
 generator1 = torch.Generator().manual_seed(42)
 train_set, val_set = torch.utils.data.random_split(loader, [0.7,0.3],generator1)
@@ -120,5 +115,5 @@ for epoch in range(n_epochs):
             best_model = model.state_dict()
         print("Epoch %d: Cross-entropy: %.4f" % (epoch, loss))
 
-torch.save([best_model,reverse_word_map], "single-char.pth")
+torch.save([best_model,reverse_word_map], f"{str(batch_size)}-{str(learning_rate)}-single-char.pth")
 
